@@ -1,5 +1,6 @@
 import React from "react";
 import HeaderPulse from "./components/HeaderPulse";
+import { featuresArray, stepsArray } from "@/lib/helper-data";
 
 export default function Home() {
   return (
@@ -26,13 +27,61 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Powerful features for Content Creators!
-            </h2>
+      </section>
+
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Powerful features for Content Creators!
+          </h2>
+
+          <div className="grid md: grid-cols-2 lg:grid-cols-3 gap-8">
+            {
+              featuresArray.map((feature, index) => {
+                const Icon = feature.icon;
+
+                return (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-500 transition-all duration-300"
+                  >
+                    <div className={`size-12 rounded-lg flex items-center justify-center mb-4 ${feature.iconBg}`}>
+                      <Icon className={`size-6 ${feature.iconColor}`} />
+                    </div>
+
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </div>
+                )
+              })
+            }
           </div>
-        </section>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Meet Your AI Agent in 3 Simple Steps
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {
+              stepsArray.map((step, index) => {
+                const Icon = step.icon;
+
+                return (
+                  <div 
+                    key={index}
+                    className="bg-white text-center p-6 rounded-xl border shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
       </section>
     </div>
   );
