@@ -75,12 +75,28 @@ export default function Home() {
                     key={index}
                     className="bg-white text-center p-6 rounded-xl border shadow-md hover:shadow-lg transition-all duration-300"
                   >
+                    <div className="size-16 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full
+                    flex items-center justify-center mx-auto mb-4">
+                      <Icon className="size-8 text-white" />
+                    </div>
 
+                    <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                    <p className="text-gray-600">{step.description}</p>
                   </div>
                 )
               })
             }
           </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-400">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Ready to meet your Agent?
+          </h2>
+
+          <p className="text-xl text-blue-50">Join Creators in leveraging AI to unlock insights</p>
         </div>
       </section>
     </div>
