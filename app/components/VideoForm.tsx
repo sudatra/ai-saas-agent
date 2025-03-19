@@ -1,12 +1,13 @@
 import React from 'react'
 import Form from 'next/form';
 import AnalyzeButton from './AnalyzeButton';
+import { analyzeYouTubeVideoURL } from '@/actions/analyze-youtube-video.action';
 
 const VideoForm = () => {
   return (
     <div className='w-full max-w-2xl mx-auto'>
       <Form
-        // action={() => {}}
+        action={analyzeYouTubeVideoURL}
         className='flex flex-col sm:flex-row gap-2 items-center'
       >
         <input 
