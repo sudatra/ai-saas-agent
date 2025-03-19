@@ -1,6 +1,7 @@
 import React from "react";
 import HeaderPulse from "./components/HeaderPulse";
 import { featuresArray, stepsArray } from "@/lib/helper-data";
+import VideoForm from "./components/VideoForm";
 
 export default function Home() {
   return (
@@ -24,6 +25,8 @@ export default function Home() {
               Tranform your content with AI-Powered Analysis,
               transcription and insights. Get started in seconds.
             </p>
+
+            <VideoForm />
           </div>
         </div>
 
