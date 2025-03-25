@@ -20,4 +20,4 @@ const SchematicComponent = async ({ componentId }: { componentId: string }) => {
   )
 }
 
-export default SchematicComponent
+export default SchematicComponent;
