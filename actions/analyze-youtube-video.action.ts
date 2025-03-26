@@ -1,5 +1,6 @@
 'use server'
 
+import { getVideoIdFromUrl } from "@/lib/get-video-from-url";
 import { redirect } from "next/navigation";
 
 export async function analyzeYouTubeVideoURL(formData: FormData) {
@@ -8,8 +9,7 @@ export async function analyzeYouTubeVideoURL(formData: FormData) {
     return;
   }
 
-  // const videoId = getVideoIdFromUrl(url);
-  const videoId = '';
+  const videoId = getVideoIdFromUrl(url);
   if(!videoId) {
     return;
   }
