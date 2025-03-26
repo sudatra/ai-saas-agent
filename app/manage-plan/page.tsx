@@ -1,9 +1,15 @@
 import React from 'react'
+import SchematicComponent from '../components/schematic/SchematicComponent'
 
 const ManagePlan = () => {
   return (
-    <div>
-      manage plan
+    <div className='container mx-auto p-4 md:p-0'>
+      <h1 className='text-2xl font-bold mb-4 my-8'>Manage Your Plan</h1>
+      <p className='text-gray-600 mb-8'>
+        Manage Your subscriptions and billing details here
+      </p>
+
+      <SchematicComponent componentId={process.env.SCHEMATIC_COMPONENT_CODE!} />
     </div>
   )
 }

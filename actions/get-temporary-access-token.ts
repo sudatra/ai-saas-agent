@@ -3,7 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { SchematicClient } from "@schematichq/schematic-typescript-node";
 
-const apiKey = process.env.SCHEMATIC_API_apiKey;
+const apiKey = process.env.SCHEMATIC_API_KEY;
 if(!apiKey) {
   throw new Error("Api key for schematic not found");
 }
