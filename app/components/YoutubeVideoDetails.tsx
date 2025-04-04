@@ -2,6 +2,7 @@
 
 import { getVideoDetails } from '@/actions/get-video-details';
 import { VideoDetails } from '@/types/types';
+import { Calendar, Eye, MessageCircle, ThumbsUp } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 
@@ -18,7 +19,11 @@ const YoutubeVideoDetails = ({ videoId }: { videoId: string }) => {
   }, [videoId]);
 
   if(!video) {
-    return <div>Video not found</div>
+    return (
+      <div className='flex justify-center items-center p-4'>
+        <div className='size-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin' />
+      </div>
+    )
   }
 
   return (
@@ -50,6 +55,44 @@ const YoutubeVideoDetails = ({ videoId }: { videoId: string }) => {
           <div>
             <p className='text-base @md:text-lg font-semibold text-gray-900'>{video.channel.title}</p>
             <p className='text-sm @md:text-base text-gray-600'>{video.channel.subscribers} subscribers</p>
+          </div>
+        </div>
+
+        <div className='grid grid-cols-2 @lg:grid-cols-4 gap-4 pt-4'>
+          <div className='bg-gray-50 rounded-lg p-3 transition-all duration-300 hover:bg-gray-100'>
+            <div className='flex items-center gap-2 mb-2'>
+              <Calendar className='size-4 text-gray-600' />
+              <p className='text-sm text-gray-600'>Published</p>
+            </div>
+
+            <p className='font-medium text-gray-900'>{new Date(video.publishedAt).toLocaleDateString()}</p>
+          </div>
+
+          <div className='bg-gray-50 rounded-lg p-3 transition-all duration-300 hover:bg-gray-100'>
+            <div className='flex items-center gap-2 mb-2'>
+              <Eye className='size-4 text-gray-600' />
+              <p className='text-sm text-gray-600'>Views</p>
+            </div>
+
+            <p className='font-medium text-gray-900'>{video.views}</p>
+          </div>
+
+          <div className='bg-gray-50 rounded-lg p-3 transition-all duration-300 hover:bg-gray-100'>
+            <div className='flex items-center gap-2 mb-2'>
+              <ThumbsUp className='size-4 text-gray-600' />
+              <p className='text-sm text-gray-600'>Likes</p>
+            </div>
+
+            <p className='font-medium text-gray-900'>{video.likes}</p>
+          </div>
+
+          <div className='bg-gray-50 rounded-lg p-3 transition-all duration-300 hover:bg-gray-100'>
+            <div className='flex items-center gap-2 mb-2'>
+              <MessageCircle className='size-4 text-gray-600' />
+              <p className='text-sm text-gray-600'>Comments</p>
+            </div>
+
+            <p className='font-medium text-gray-900'>{video.comments}</p>
           </div>
         </div>
       </div>
