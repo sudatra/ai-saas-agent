@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 const ThumbnailGeneration = ({ videoId }: { videoId: string }) => {
   const { user } = useUser();
-  const images = []; // from convex db
+  const images = []; // TODO: from convex db
 
   return (
     <div className='rounded-xl flex flex-col p-4 border'>
