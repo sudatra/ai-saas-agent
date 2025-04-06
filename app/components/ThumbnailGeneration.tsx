@@ -5,10 +5,15 @@ import React from 'react'
 import Usage from './Usage';
 import { FeatureFlag } from '../features/flags';
 import Image from 'next/image';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 const ThumbnailGeneration = ({ videoId }: { videoId: string }) => {
   const { user } = useUser();
-  const images = []; // TODO: from convex db
+  const images = useQuery(api.images.getImages, {
+    userId: user?.id ?? '',
+    videoId: videoId
+  });
 
   return (
     <div className='rounded-xl flex flex-col p-4 border'>

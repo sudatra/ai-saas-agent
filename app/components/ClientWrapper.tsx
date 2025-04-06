@@ -1,9 +1,9 @@
 'use client'
 
-import { ClerkProvider } from "@clerk/nextjs";
 import { SchematicProvider } from "@schematichq/schematic-react";
 import React from "react";
 import SchematicWrapper from "./SchematicWrapper";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 export default function ClientWrapper({
   children,
@@ -17,13 +17,13 @@ export default function ClientWrapper({
 
   return (
     <>
-      <ClerkProvider>
+      <ConvexClientProvider>
         <SchematicProvider publishableKey={schematicPublishableKey}>
           <SchematicWrapper>
             {children}
           </SchematicWrapper>
         </SchematicProvider>
-      </ClerkProvider>
+      </ConvexClientProvider>
     </>
   );
 }
