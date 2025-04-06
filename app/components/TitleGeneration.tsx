@@ -10,7 +10,7 @@ import { Copy } from 'lucide-react';
 const TitleGeneration = ({ videoId }: { videoId: string }) => {
   const { user } = useUser();
   const { value: isTitleGenerationEnabled } = useSchematicEntitlement(FeatureFlag.TITLE_GENERATIONS);
-  const titles = []; // TODO: pull from convex db
+  const titles: { title: string, _id: string }[] = []; // TODO: pull from convex db
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
