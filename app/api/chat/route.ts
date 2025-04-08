@@ -45,6 +45,7 @@ export async function POST(req: Request) {
       },
       ...messages
     ],
+    tools: {}
   });
 
   return result.toDataStreamResponse();
