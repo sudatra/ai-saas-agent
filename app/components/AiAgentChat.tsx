@@ -3,6 +3,26 @@
 import { Button } from '@/components/ui/button';
 import { useChat } from '@ai-sdk/react'
 import React from 'react'
+import ReactMarkdown from 'react-markdown'
+
+interface ToolInvocation {
+  toolCallId: string;
+  toolName: string;
+  result?: Record<string, number>;
+}
+
+interface ToolPart {
+  type: 'tool-invocation',
+  toolInvocation: ToolInvocation
+}
+
+const formatToolInvocation = (part: ToolPart) => {
+  if(!part.toolInvocation) {
+    return 'Unknown Tool'
+  }
+
+  return `Tool Used: ${part.toolInvocation.toolName}`;
+}
 
 const AiAgentChat = ({ videoId }: { videoId: string }) => {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -29,8 +49,53 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
 
           {
             messages.map((message) => (
-              <div key={message.id}>
-                <p>{message.content}</p>
+              <div 
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-[85%] ${message.role === 'user' ? 'bg-blue-500' : 'bg-gray-100'} rounded-2xl px-4 py-3`}>
+                  {
+                    message.parts && message.role === 'assistant' ? (
+                      <div className='space-y-3'>
+                        {
+                          message.parts.map((part, i) => 
+                            part.type === 'text' ? (
+                              <div 
+                                key={i}
+                                className='prose prose-sm max-w-none'
+                              >
+                                <ReactMarkdown>{part.text}</ReactMarkdown>
+                              </div>
+                            ) : (
+                              part.type === 'tool-invocation' ? (
+                                <div
+                                  key={i}
+                                  className='bg-white/50 rounded-lg space-y-2 p-2 text-gray-800'
+                                >
+                                  <div className='font-medium text-xs'>
+                                    {formatToolInvocation(part as ToolPart)}
+                                  </div>
+
+                                  {
+                                    (part as ToolPart).toolInvocation.result && (
+                                      <pre className='text-xs bg-white/75 p-2 rounded overflow-auto max-h-40'>
+                                        {JSON.stringify((part as ToolPart).toolInvocation.result, null, 2)}
+                                      </pre>
+                                    )
+                                  }
+                                </div>
+                              ) : null
+                            )
+                          )
+                        }
+                      </div>
+                    ) : (
+                      <div className='prose prose-sm max-w-none text-white'>
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </div>
+                    )
+                  }
+                </div>
               </div>
             ))
           }
