@@ -1,4 +1,5 @@
 import { getVideoDetails } from "@/actions/get-video-details";
+import { fetchTranscript } from "@/tools/fetchTranscript";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { currentUser } from "@clerk/nextjs/server";
 import { streamText } from "ai";
@@ -10,8 +11,6 @@ const anthropic = createAnthropic({
     'anthropic-beta': 'token-efficient-tools-2025-02-19'
   }
 });
-
-const systemMessage = `You are an Ai Agent ready to accept questions from the user about a specific video. The vi`
 
 export async function POST(req: Request) {
   const { messages, videoId } = await req.json();
@@ -45,7 +44,9 @@ export async function POST(req: Request) {
       },
       ...messages
     ],
-    tools: {}
+    tools: {
+      fetchTranscript: fetchTranscript
+    }
   });
 
   return result.toDataStreamResponse();
