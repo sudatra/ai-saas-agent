@@ -1,9 +1,14 @@
+import { FeatureFlag, featureFlagEvents } from "@/app/features/flags";
+import { api } from "@/convex/_generated/api";
+import { client } from "@/lib/schematic";
 import { currentUser } from "@clerk/nextjs/server";
+import { ConvexHttpClient } from "convex/browser";
 import { Innertube } from 'youtubei.js';
 
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 export interface TranscriptEntry {
   text: string;
-  timestamp: string;
+  timeStamp: string;
 }
 
 const youtube = await Innertube.create({
@@ -24,12 +29,12 @@ async function fetchTranscript(videoId: string): Promise<TranscriptEntry[]> {
     const info = await youtube.getInfo(videoId);
     const transcriptData = await info.getTranscript();
 
-    const trancript: TranscriptEntry[] = transcriptData.transcript.content?.body?.initial_segments.map((segment) => ({
+    const transcript: TranscriptEntry[] = transcriptData.transcript.content?.body?.initial_segments.map((segment) => ({
       text: segment.snippet.text ?? 'N/A',
-      timestamp: formatTimestamp(Number(segment.start_ms))
+      timeStamp: formatTimestamp(Number(segment.start_ms))
     })) ?? [];
 
-    return trancript;
+    return transcript;
   }
   catch(error) {
     console.error("Error fetching transcript: ", error);
@@ -43,9 +48,44 @@ export async function getYoutubeTranscript(videoId: string) {
     throw new Error('User not found');
   }
 
-  const transcript = await fetchTranscript(videoId);
-  return {
-    transcript,
-    cache: 'This was not cached'
+  const existingTranscript = await convex.query(
+    api.transcript.getTranscriptByVideoId,
+    { videoId, userId: user.id }
+  );
+
+  if(existingTranscript) {
+    return {
+      transcript: existingTranscript.transcript,
+      cache: 'This video has already been transcribed, Accessing cached transcript instead of using token'
+    }
+  }
+
+  try {
+    const transcript = await fetchTranscript(videoId);
+    await convex.mutation(
+      api.transcript.storeTranscript,
+      {
+        videoId,
+        userId: user.id,
+        transcript
+      }
+    );
+
+    await client.track({
+      event: featureFlagEvents[FeatureFlag.TRANSCRIPTION].event,
+      company: { id: user.id },
+      user: { id: user.id }
+    })
+
+    return {
+      transcript,
+      cache: 'This video was transcribed. Token was used'
+    }
+  }
+  catch(error) {
+    return {
+      transcript: [],
+      cache: 'Error fetching transcript'
+    }
   }
 }
