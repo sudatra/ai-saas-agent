@@ -1,5 +1,6 @@
 'use client'
 
+import { createOrGetVideo } from '@/actions/create-or-get-video'
 import AiAgentChat from '@/app/components/AiAgentChat'
 import ThumbnailGeneration from '@/app/components/ThumbnailGeneration'
 import TitleGeneration from '@/app/components/TitleGeneration'
@@ -32,6 +33,8 @@ const AnalysisPage = () => {
         setVideo(response.data!);
       }
     }
+
+    fetchVideo();
   }, [videoId, user]);
 
   return (
