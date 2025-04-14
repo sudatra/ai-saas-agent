@@ -20,12 +20,8 @@ export const generateImage = (videoId: string, userId: string) => tool({
     if(!isImageGenerationEnabled) {
       return { error: 'Image Generation is not enabled, upgrade plan!!' };
     }
-
-    console.log("hello from generateImage.ts - ")
-
     
     const image = await dallEImageGeneration(prompt, videoId);
-    console.log("hello from generateImage.ts - ", image)
     return { image };
   }
 })
