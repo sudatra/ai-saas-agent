@@ -3,10 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { Message, useChat } from '@ai-sdk/react'
 import { useSchematicFlag } from '@schematichq/schematic-react';
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { FeatureFlag } from '../features/flags';
-import { LetterText } from 'lucide-react';
+import { ImageIcon, LetterText, PenIcon } from 'lucide-react';
 
 interface ToolInvocation {
   toolCallId: string;
@@ -28,7 +28,7 @@ const formatToolInvocation = (part: ToolPart) => {
 }
 
 const AiAgentChat = ({ videoId }: { videoId: string }) => {
-  const { messages, input, handleInputChange, handleSubmit, append } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, append, status } = useChat({
     maxSteps: 5,
     body: { videoId }
   });
@@ -52,6 +52,28 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
     append(userMessage);
   }
 
+  const generateTitle = () => {
+    const randomId = Math.random().toString(36).substring(2, 15);
+    const userMessage: Message = {
+      id: `generate-title-${randomId}`,
+      role: 'user',
+      content: `Generate a Title for this video.`
+    };
+
+    append(userMessage);
+  }
+
+  const generateImage = () => {
+    const randomId = Math.random().toString(36).substring(2, 15);
+    const userMessage: Message = {
+      id: `generate-image-${randomId}`,
+      role: 'user',
+      content: `Generate a Thumbnail for this video.`
+    };
+
+    append(userMessage);
+  }
+
   return (
     <div className='flex flex-col h-full'>
       <div className='hidden lg:block px-4 pb-3 border-b border-gray-100'>
@@ -64,7 +86,7 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
             messages.length === 0 && (
               <div className='flex flex-col items-center justify-center h-full min-h-[200px]'>
                 <h3 className='text-lg font-medium text-gray-700'>Welcome to the AI Agent</h3>
-                <p className='text-sm text-gray-500'>Ask any questions about your video!!</p>
+                <p className='text-sm text-gray-500'>Ask any question about your video!!</p>
               </div>
             )
           }
@@ -132,7 +154,11 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
           >
             <input 
               type='text'
-              placeholder='Enter a question...'
+              placeholder={
+                !isVideoAnalysisEnabled
+                ? 'Upgrade to chat with the AI Agent!!'
+                : 'Ask a question...'
+              }
               className='flex-1 px-4 py-2 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2
               focus:ring-blue-500 focus:border-transparent'
               value={input}
@@ -143,8 +169,19 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
               type='submit'
               className='px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-colors 
               disabled:opacity-50 disabled:cursor-not-allowed'
+              disabled={
+                status === 'streaming' ||
+                status === 'submitted' ||
+                !isVideoAnalysisEnabled
+              }
             >
-              Send
+              {
+                status === 'streaming'
+                ? 'Agent is replying'
+                : status === 'submitted'
+                ? 'Agent is thinking'
+                : 'Send'
+              }
             </Button>
           </form>
 
@@ -164,6 +201,28 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
                   <span>Upgrade to generate script</span>
                 )
               }
+            </button>
+
+            <button
+              className='text-xs xl:text-sm w-full flex items-center justify-center gap-2 px-2 py-4 bg-gray-100 hover:bg-gray-200 
+              rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              onClick={generateTitle}
+              type='button'
+              disabled={!isTitleGenerationEnabled}
+            >
+              <PenIcon className='size-4' />
+              Generate Title
+            </button>
+
+            <button
+              className='text-xs xl:text-sm w-full flex items-center justify-center gap-2 px-2 py-4 bg-gray-100 hover:bg-gray-200 
+              rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              onClick={generateImage}
+              type='button'
+              disabled={!isImageGenerationEnabled}
+            >
+              <ImageIcon className='size-4' />
+              Generate Image
             </button>
           </div>
         </div>

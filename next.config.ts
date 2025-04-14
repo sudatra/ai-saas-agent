@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
       {
         hostname: 'yt3.ggpht.com',
         protocol: 'https'
+      },
+      {
+        hostname: 'expert-antelope-497.convex.cloud',
+        protocol: 'https'
       }
     ]
   }
