@@ -15,7 +15,7 @@ export async function checkFeatureUsageLimit(userId: string, eventSubType: strin
     }
 
     const { usage, allocation } = feature;
-    if(!usage || !allocation) {
+    if(usage === undefined || allocation === undefined) {
       return {
         success: false,
         error: 'System Error - Contact Support'
@@ -23,7 +23,7 @@ export async function checkFeatureUsageLimit(userId: string, eventSubType: strin
     }
 
     const hasExceededUsageLimit = (usage >= allocation);
-    if(!hasExceededUsageLimit) {
+    if(hasExceededUsageLimit) {
       const featureName = Object.entries(featureFlagEvents).find(([, value]) => value.event === eventSubType)?.[0] || eventSubType;
       return {
         success: false,
