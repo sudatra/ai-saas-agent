@@ -1,9 +1,12 @@
 'use client'
 
 import { Button } from '@/components/ui/button';
-import { useChat } from '@ai-sdk/react'
+import { Message, useChat } from '@ai-sdk/react'
+import { useSchematicFlag } from '@schematichq/schematic-react';
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import { FeatureFlag } from '../features/flags';
+import { LetterText } from 'lucide-react';
 
 interface ToolInvocation {
   toolCallId: string;
@@ -25,10 +28,29 @@ const formatToolInvocation = (part: ToolPart) => {
 }
 
 const AiAgentChat = ({ videoId }: { videoId: string }) => {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, append } = useChat({
     maxSteps: 5,
     body: { videoId }
   });
+
+  const isScriptGenerationEnabled = useSchematicFlag(FeatureFlag.SCRIPT_GENERATION);
+  const isImageGenerationEnabled = useSchematicFlag(FeatureFlag.IMAGE_GENERATION);
+  const isTitleGenerationEnabled = useSchematicFlag(FeatureFlag.TITLE_GENERATIONS);
+  const isVideoAnalysisEnabled = useSchematicFlag(FeatureFlag.VIDEO_ANALYSIS);
+
+  const generateScript = () => {
+    const randomId = Math.random().toString(36).substring(2, 15);
+    const userMessage: Message = {
+      id: `generate-script-${randomId}`,
+      role: 'user',
+      content: `
+        Generate a step-by-step shooting script for this video, so that i can use it to produce my own video, similar to this one. Just generate 
+        the script, do not unecessarily generate any images. 
+      `
+    };
+
+    append(userMessage);
+  }
 
   return (
     <div className='flex flex-col h-full'>
@@ -125,6 +147,25 @@ const AiAgentChat = ({ videoId }: { videoId: string }) => {
               Send
             </Button>
           </form>
+
+          <div className='flex gap-2'>
+            <button 
+              className='text-xs xl:text-sm w-full flex items-center justify-center gap-2 px-2 py-4 bg-gray-100 hover:bg-gray-200 
+              rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              onClick={generateScript}
+              type='button'
+              disabled={!isScriptGenerationEnabled}
+            >
+              <LetterText className='size-4' />
+              {
+                isScriptGenerationEnabled ? (
+                  <span>Generate Script</span>
+                ) : (
+                  <span>Upgrade to generate script</span>
+                )
+              }
+            </button>
+          </div>
         </div>
       </div>
     </div>
