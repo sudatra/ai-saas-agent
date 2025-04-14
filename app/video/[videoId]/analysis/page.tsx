@@ -7,12 +7,32 @@ import Transcription from '@/app/components/Transcription'
 import Usage from '@/app/components/Usage'
 import YoutubeVideoDetails from '@/app/components/YoutubeVideoDetails'
 import { FeatureFlag } from '@/app/features/flags'
+import { Doc } from '@/convex/_generated/dataModel'
+import { useUser } from '@clerk/nextjs'
 import { useParams } from 'next/navigation'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const AnalysisPage = () => {
   const params = useParams<{ videoId: string }>();
   const videoId = params.videoId;
+  const { user } = useUser();
+  const [video, setVideo] = useState<Doc<'videos'> | null | undefined>(undefined);
+
+  useEffect(() => {
+    if(!user?.id) {
+      return;
+    }
+
+    const fetchVideo = async () => {
+      const response = await createOrGetVideo(videoId as string, user.id);
+      if(!response.success) {
+        // TODO: toast error
+      }
+      else {
+        setVideo(response.data!);
+      }
+    }
+  }, [videoId, user]);
 
   return (
     <div className='xl:container mx-auto px-4 md:px-0'>
@@ -20,7 +40,7 @@ const AnalysisPage = () => {
         <div className='order-2 lg:order-1 flex flex-col gap-2 bg-white lg:border-r border-gray-200 p-6'>
           <div className='flex flex-col gap-4 bg-white lg:border-r border-gray-200 p-6'>
             <Usage 
-              featureFlag={FeatureFlag.ANALYSE_VIDEO}
+              featureFlag={FeatureFlag.VIDEO_ANALYSIS}
               title='Analyse Video'
             />
           </div>
