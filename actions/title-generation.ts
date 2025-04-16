@@ -1,6 +1,9 @@
 'use server'
 
+import { FeatureFlag, featureFlagEvents } from "@/app/features/flags";
+import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex"
+import { client } from "@/lib/schematic";
 import { currentUser } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 
@@ -42,6 +45,18 @@ export async function titleGeneration(videoId: string, videoSummary: string, con
         error: 'System Error: Failed to generate title'
       }
     }
+
+    await convexClient.mutation(api.titles.generate, {
+      videoId,
+      userId: user.id,
+      title: title
+    });
+
+    await client.track({
+      event: featureFlagEvents[FeatureFlag.TITLE_GENERATIONS].event,
+      company: { id: user.id },
+      user: { id: user.id }
+    });
   }
   catch(error) {
     console.error('Error generating title: ', error);

@@ -12,6 +12,7 @@ import { Doc } from '@/convex/_generated/dataModel'
 import { useUser } from '@clerk/nextjs'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 const AnalysisPage = () => {
   const params = useParams<{ videoId: string }>();
@@ -27,7 +28,7 @@ const AnalysisPage = () => {
     const fetchVideo = async () => {
       const response = await createOrGetVideo(videoId as string, user.id);
       if(!response.success) {
-        // TODO: toast error
+        toast.error('Unable to fetch video transcription!!');
       }
       else {
         setVideo(response.data!);

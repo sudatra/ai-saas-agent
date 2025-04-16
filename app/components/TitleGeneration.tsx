@@ -6,14 +6,21 @@ import Usage from './Usage';
 import { FeatureFlag } from '../features/flags';
 import { useSchematicEntitlement } from '@schematichq/schematic-react';
 import { Copy } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { toast } from 'sonner';
 
 const TitleGeneration = ({ videoId }: { videoId: string }) => {
   const { user } = useUser();
   const { value: isTitleGenerationEnabled } = useSchematicEntitlement(FeatureFlag.TITLE_GENERATIONS);
-  const titles: { title: string, _id: string }[] = []; // TODO: pull from convex db
+  const titles = useQuery(api.titles.list, {
+    videoId: videoId,
+    userId: user?.id ?? ''
+  });
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    toast.success('Copied to clipboard');
   }
 
   return (

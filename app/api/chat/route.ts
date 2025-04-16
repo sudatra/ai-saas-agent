@@ -2,6 +2,7 @@ import { getVideoDetails } from "@/actions/get-video-details";
 import { getVideoIdFromUrl } from "@/lib/get-video-from-url";
 import { fetchTranscript } from "@/tools/fetchTranscript";
 import { generateImage } from "@/tools/generateImage";
+import { generateTitle } from "@/tools/generateTitle";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { currentUser } from "@clerk/nextjs/server";
 import { streamText, tool } from "ai";
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
     tools: {
       fetchTranscript: fetchTranscript,
       generateImage: generateImage(videoId, user.id),
+      generateTitle: generateTitle,
       getVideoDetails: tool({
         description: 'Get the details of the youtube video',
         parameters: z.object({
