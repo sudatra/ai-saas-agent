@@ -1,10 +1,12 @@
 import { getVideoDetails } from "@/actions/get-video-details";
+import { getVideoIdFromUrl } from "@/lib/get-video-from-url";
 import { fetchTranscript } from "@/tools/fetchTranscript";
 import { generateImage } from "@/tools/generateImage";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { currentUser } from "@clerk/nextjs/server";
-import { streamText } from "ai";
+import { streamText, tool } from "ai";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const anthropic = createAnthropic({
   apiKey: process.env.CLAUDE_API_KEY,
@@ -47,7 +49,27 @@ export async function POST(req: Request) {
     ],
     tools: {
       fetchTranscript: fetchTranscript,
-      generateImage: generateImage(videoId, user.id)
+      generateImage: generateImage(videoId, user.id),
+      getVideoDetails: tool({
+        description: 'Get the details of the youtube video',
+        parameters: z.object({
+          videoId: z.string().describe('The video ID to get the details for')
+        }),
+        execute: async ({ videoId }) => {
+          const videoDetails = await getVideoDetails(videoId);
+          return { videoDetails };
+        }
+      }),
+      extractVIdeoId: tool({
+        description: 'Extract Video ID from the URL',
+        parameters: z.object({
+          url: z.string().describe('URL to get the video ID from')
+        }),
+        execute: async ({ url }) => {
+          const videoId = getVideoIdFromUrl(url);
+          return { videoId };
+        }
+      })
     }
   });
 

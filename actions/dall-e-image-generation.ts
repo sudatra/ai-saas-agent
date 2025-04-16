@@ -39,10 +39,7 @@ export const dallEImageGeneration = async (prompt: string, videoId: string) => {
       throw new Error('Failed to generate image');
     }
   
-    console.log(imageResponse, imageUrl)
-  
     const postUrl = await convexClient.mutation(api.images.generateUploadUrl);
-    console.log(postUrl)
     const image: Blob = await fetch(imageUrl).then((res) => res.blob());
     const result = await fetch(postUrl, {
       method: 'POST',
